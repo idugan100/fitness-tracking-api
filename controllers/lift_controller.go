@@ -12,6 +12,11 @@ import (
 func GetLift(ctx *gin.Context) {
 	//validate id input
 	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(500)
+		return
+	}
 	//get result from database and read into struct
 
 	row, err := db_connection.Query("SELECT * FROM LIFTS WHERE id=?", id)
@@ -92,5 +97,22 @@ func SearchLiftsByName(ctx *gin.Context) {
 		}
 	}
 	ctx.JSON(200, lifts)
+}
+
+func DeleteLift(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(500)
+		return
+	}
+
+	_, err = db_connection.Exec("DELETE FROM Lifts WHERE id=?", id)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(500)
+	}
+
+	ctx.JSON(200, "lift sucessfully deleted")
 
 }

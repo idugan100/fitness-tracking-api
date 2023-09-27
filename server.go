@@ -14,6 +14,7 @@ func main() {
 	server.GET("lift/:id", controllers.GetLift)
 	server.GET("lifts", controllers.GetAllLifts)
 	server.GET("lifts/search", controllers.SearchLiftsByName)
+	server.DELETE("/lifts/delete/:id", controllers.DeleteLift)
 	server.Run(":8080")
 
 }
