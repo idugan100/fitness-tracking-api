@@ -13,6 +13,7 @@ func main() {
 
 	server.GET("lift/:id", controllers.GetLift)
 	server.GET("lifts", controllers.GetAllLifts)
+	server.GET("lifts/search", controllers.SearchLiftsByName)
 	server.Run(":8080")
 
 }

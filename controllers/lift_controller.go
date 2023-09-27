@@ -37,7 +37,7 @@ func GetLift(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSONP(200, lift)
+	ctx.JSON(200, lift)
 	return
 }
 
@@ -62,4 +62,35 @@ func GetAllLifts(ctx *gin.Context) {
 		}
 	}
 	ctx.JSON(200, lifts)
+}
+
+func SearchLiftsByName(ctx *gin.Context) {
+	search_name := ctx.Query("name")
+	if search_name == "" {
+		ctx.JSON(400, "missing name query parameter")
+		return
+	}
+	rows, err := db_connection.Query("SELECT * FROM Lifts WHERE name like ?", "%"+search_name+"%")
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(500)
+		return
+	}
+	defer rows.Close()
+
+	var lifts []models.Lift
+	for rows.Next() {
+		var lift models.Lift
+		err = rows.Scan(&lift.Id, &lift.Name, &lift.Compound, &lift.Upper, &lift.Lower)
+		log.Print(lift)
+		if err != nil {
+			log.Print(lift, err)
+			ctx.AbortWithStatus(500)
+			return
+		} else {
+			lifts = append(lifts, lift)
+		}
+	}
+	ctx.JSON(200, lifts)
+
 }
