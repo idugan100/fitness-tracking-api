@@ -40,3 +40,26 @@ func GetLift(ctx *gin.Context) {
 	ctx.JSONP(200, lift)
 	return
 }
+
+func GetAllLifts(ctx *gin.Context) {
+	rows, err := db_connection.Query("SELECT * FROM LIFTS")
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(500)
+	}
+	defer rows.Close()
+
+	var lifts []models.Lift
+	for rows.Next() {
+		var lift models.Lift
+		err = rows.Scan(&lift.Id, &lift.Name, &lift.Compound, &lift.Upper, &lift.Lower)
+		if err != nil {
+			log.Print(lift, err)
+			ctx.AbortWithStatus(500)
+			return
+		} else {
+			lifts = append(lifts, lift)
+		}
+	}
+	ctx.JSON(200, lifts)
+}
