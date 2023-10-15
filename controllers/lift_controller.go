@@ -43,7 +43,6 @@ func GetLift(ctx *gin.Context) {
 	}
 
 	ctx.JSON(200, lift)
-	return
 }
 
 func GetAllLifts(ctx *gin.Context) {
