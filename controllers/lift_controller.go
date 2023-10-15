@@ -111,8 +111,28 @@ func DeleteLift(ctx *gin.Context) {
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
+		return
 	}
 
 	ctx.JSON(200, "lift sucessfully deleted")
+
+}
+
+func AddLift(ctx *gin.Context) {
+	var new_lift models.Lift
+	err := ctx.BindJSON(&new_lift)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(500)
+		return
+	}
+
+	_, err = db_connection.Exec("INSERT INTO Lifts (name, compound, upper, lower) Values (?,?,?,?) ", new_lift.Name, new_lift.Compound, new_lift.Upper, new_lift.Lower)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(500)
+		return
+	}
+	ctx.JSON(201, "lift sucessfully created")
 
 }
