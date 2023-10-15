@@ -122,7 +122,7 @@ func AddLift(ctx *gin.Context) {
 	err := ctx.BindJSON(&new_lift)
 	if err != nil {
 		log.Print(err)
-		ctx.AbortWithStatus(500)
+		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
