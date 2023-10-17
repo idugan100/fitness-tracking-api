@@ -20,6 +20,13 @@ func main() {
 		lift_group.POST("", controllers.AddLift)
 	}
 
+	cardio_group := server.Group("/cardio")
+	{
+		cardio_group.GET("/:id", controllers.GetCardioById)
+		cardio_group.GET("", controllers.GetAllCardio)
+		cardio_group.GET("/search", controllers.SearchCardioByName)
+	}
+
 	server.Run(":8080")
 
 }
