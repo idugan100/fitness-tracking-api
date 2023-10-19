@@ -116,3 +116,20 @@ func DeleteCardio(ctx *gin.Context) {
 
 	ctx.JSON(200, "cardio successfully deleted")
 }
+
+func AddCardio(ctx *gin.Context) {
+	var cardio models.Cardio
+	err := ctx.BindJSON(&cardio)
+	if err != nil {
+		log.Print(err)
+		ctx.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	_, err = db_connection.Exec("INSERT INTO Cardio (name) VALUES (?)", cardio.Name)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(500)
+		return
+	}
+	ctx.JSON(201, "cardio sucessfully created")
+}

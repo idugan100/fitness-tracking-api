@@ -26,6 +26,7 @@ func main() {
 		cardio_group.GET("", controllers.GetAllCardio)
 		cardio_group.GET("/search", controllers.SearchCardioByName)
 		cardio_group.DELETE("/:id", controllers.DeleteCardio)
+		cardio_group.POST("", controllers.AddCardio)
 	}
 
 	server.Run(":8080")
