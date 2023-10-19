@@ -99,3 +99,20 @@ func SearchCardioByName(ctx *gin.Context) {
 	}
 	ctx.JSON(200, cardio_list)
 }
+
+func DeleteCardio(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(500)
+		return
+	}
+	_, err = db_connection.Exec("DELETE FROM Cardio WHERE id=?", id)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(500)
+		return
+	}
+
+	ctx.JSON(200, "cardio successfully deleted")
+}
