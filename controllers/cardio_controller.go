@@ -126,6 +126,7 @@ func AddCardio(ctx *gin.Context) {
 		return
 	}
 	_, err = db_connection.Exec("INSERT INTO Cardio (name) VALUES (?)", cardio.Name)
+
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
