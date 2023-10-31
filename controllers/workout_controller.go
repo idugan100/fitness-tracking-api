@@ -8,7 +8,7 @@ import (
 
 func getAllWorkouts(ctx *gin.Context) {
 
-	rowzzz, err := db_connection.Query("SELECT * FROM Workouts")
+	rows, err := db_connection.Query("SELECT * FROM Workouts")
 
 	if err != nil {
 		log.Print(err)
