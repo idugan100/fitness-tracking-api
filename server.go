@@ -12,6 +12,7 @@ func main() {
 	server := gin.Default()
 	server.ForwardedByClientIP = true
 	server.SetTrustedProxies([]string{"127.0.0.1"})
+
 	lift_group := server.Group("/lifts")
 	{
 		lift_group.GET("/:id", controllers.GetLift)
@@ -28,6 +29,11 @@ func main() {
 		cardio_group.GET("/search", controllers.SearchCardioByName)
 		cardio_group.DELETE("/:id", controllers.DeleteCardio)
 		cardio_group.POST("", controllers.AddCardio)
+	}
+
+	workout_group := server.Group("/workouts")
+	{
+		workout_group.GET("")
 	}
 
 	server.Run(":8080")
