@@ -33,7 +33,7 @@ func main() {
 
 	workout_group := server.Group("/workouts")
 	{
-		workout_group.GET("")
+		workout_group.GET("", controllers.GetAllWorkouts)
 	}
 
 	server.Run(":8080")
