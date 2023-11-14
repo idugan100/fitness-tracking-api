@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fitness-tracker-api/testbackend/database"
 	"fitness-tracker-api/testbackend/models"
 	"log"
 
@@ -19,7 +20,7 @@ func GetLift(ctx *gin.Context) {
 	}
 	//get result from database and read into struct
 
-	row, err := db_connection.Query("SELECT * FROM LIFTS WHERE id=?", id)
+	row, err := database.DB_connection.Query("SELECT * FROM LIFTS WHERE id=?", id)
 
 	if err != nil {
 		log.Print(err)
@@ -46,7 +47,7 @@ func GetLift(ctx *gin.Context) {
 }
 
 func GetAllLifts(ctx *gin.Context) {
-	rows, err := db_connection.Query("SELECT * FROM LIFTS")
+	rows, err := database.DB_connection.Query("SELECT * FROM LIFTS")
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
@@ -74,7 +75,7 @@ func SearchLiftsByName(ctx *gin.Context) {
 		ctx.JSON(400, "missing name query parameter")
 		return
 	}
-	rows, err := db_connection.Query("SELECT * FROM Lifts WHERE name like ?", "%"+search_name+"%")
+	rows, err := database.DB_connection.Query("SELECT * FROM Lifts WHERE name like ?", "%"+search_name+"%")
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
@@ -106,7 +107,7 @@ func DeleteLift(ctx *gin.Context) {
 		return
 	}
 
-	_, err = db_connection.Exec("DELETE FROM Lifts WHERE id=?", id)
+	_, err = database.DB_connection.Exec("DELETE FROM Lifts WHERE id=?", id)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
@@ -126,7 +127,7 @@ func AddLift(ctx *gin.Context) {
 		return
 	}
 
-	_, err = db_connection.Exec("INSERT INTO Lifts (name, compound, upper, lower) Values (?,?,?,?) ", new_lift.Name, new_lift.Compound, new_lift.Upper, new_lift.Lower)
+	_, err = database.DB_connection.Exec("INSERT INTO Lifts (name, compound, upper, lower) Values (?,?,?,?) ", new_lift.Name, new_lift.Compound, new_lift.Upper, new_lift.Lower)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)

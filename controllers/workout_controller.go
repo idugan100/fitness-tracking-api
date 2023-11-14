@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fitness-tracker-api/testbackend/database"
 	"fitness-tracker-api/testbackend/models"
 	"log"
 	"strconv"
@@ -16,7 +17,7 @@ func GetWorkout(ctx *gin.Context) {
 		return
 	}
 
-	row, err := db_connection.Query("SELECT * FROM Workouts WHERE id=?", id)
+	row, err := database.DB_connection.Query("SELECT * FROM Workouts WHERE id=?", id)
 
 	if err != nil {
 		log.Print(err)
@@ -44,7 +45,7 @@ func GetWorkout(ctx *gin.Context) {
 
 func GetAllWorkouts(ctx *gin.Context) {
 
-	rows, err := db_connection.Query("SELECT * FROM Workouts")
+	rows, err := database.DB_connection.Query("SELECT * FROM Workouts")
 
 	if err != nil {
 		log.Print(err)
@@ -77,7 +78,7 @@ func DeleteWorkout(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(400, "invalid id parameter")
 		return
 	}
-	res, err := db_connection.Exec("DELETE FROM Workouts WHERE id=?", id)
+	res, err := database.DB_connection.Exec("DELETE FROM Workouts WHERE id=?", id)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
@@ -109,7 +110,7 @@ func AddWorkout(ctx *gin.Context) {
 		return
 	}
 
-	_, err = db_connection.Exec("INSERT INTO Workouts (Location, Notes) VALUES (?, ?)", &workout.Location, &workout.Notes)
+	_, err = database.DB_connection.Exec("INSERT INTO Workouts (Location, Notes) VALUES (?, ?)", &workout.Location, &workout.Notes)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)

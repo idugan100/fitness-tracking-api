@@ -2,13 +2,14 @@ package main
 
 import (
 	"fitness-tracker-api/testbackend/controllers"
+	"fitness-tracker-api/testbackend/database"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	controllers.Connect_to_database()
+	database.Connect_to_database()
 	server := gin.Default()
 	server.ForwardedByClientIP = true
 	server.SetTrustedProxies([]string{"127.0.0.1"})

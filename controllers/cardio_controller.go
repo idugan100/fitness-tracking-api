@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fitness-tracker-api/testbackend/database"
 	"fitness-tracker-api/testbackend/models"
 	"log"
 
@@ -19,7 +20,7 @@ func GetCardioById(ctx *gin.Context) {
 	}
 
 	//get result from database and read into struct
-	row, err := db_connection.Query("SELECT * FROM Cardio WHERE id=?", id)
+	row, err := database.DB_connection.Query("SELECT * FROM Cardio WHERE id=?", id)
 
 	if err != nil {
 		log.Print(err)
@@ -46,7 +47,7 @@ func GetCardioById(ctx *gin.Context) {
 }
 
 func GetAllCardio(ctx *gin.Context) {
-	rows, err := db_connection.Query("SELECT * FROM Cardio")
+	rows, err := database.DB_connection.Query("SELECT * FROM Cardio")
 
 	if err != nil {
 		log.Print(err)
@@ -78,7 +79,7 @@ func SearchCardioByName(ctx *gin.Context) {
 		ctx.JSON(400, "missing name query parameter")
 	}
 
-	rows, err := db_connection.Query("SELECT * FROM Cardio WHERE Name LIKE ?", "%"+search+"%")
+	rows, err := database.DB_connection.Query("SELECT * FROM Cardio WHERE Name LIKE ?", "%"+search+"%")
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
@@ -107,7 +108,7 @@ func DeleteCardio(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	_, err = db_connection.Exec("DELETE FROM Cardio WHERE id=?", id)
+	_, err = database.DB_connection.Exec("DELETE FROM Cardio WHERE id=?", id)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
@@ -125,7 +126,7 @@ func AddCardio(ctx *gin.Context) {
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	_, err = db_connection.Exec("INSERT INTO Cardio (name) VALUES (?)", cardio.Name)
+	_, err = database.DB_connection.Exec("INSERT INTO Cardio (name) VALUES (?)", cardio.Name)
 
 	if err != nil {
 		log.Print(err)
