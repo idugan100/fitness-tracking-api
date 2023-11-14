@@ -35,6 +35,8 @@ func main() {
 	{
 		workout_group.GET("", controllers.GetAllWorkouts)
 		workout_group.GET("/:id", controllers.GetWorkout)
+		workout_group.DELETE("/:id", controllers.DeleteWorkout)
+		workout_group.POST("", controllers.AddWorkout)
 	}
 
 	server.Run(":8080")

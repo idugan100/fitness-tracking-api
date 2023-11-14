@@ -69,3 +69,53 @@ func GetAllWorkouts(ctx *gin.Context) {
 
 	ctx.JSON(200, workouts)
 }
+
+func DeleteWorkout(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatusJSON(400, "invalid id parameter")
+		return
+	}
+	res, err := db_connection.Exec("DELETE FROM Workouts WHERE id=?", id)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(500)
+		return
+	}
+
+	rows_deleted, err := res.RowsAffected()
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(500)
+		return
+	}
+
+	if rows_deleted == 0 {
+		log.Print("unsucessfull deletion")
+		ctx.AbortWithStatus(410)
+		return
+	}
+
+	ctx.JSON(200, "workout sucessfully deleted")
+}
+
+func AddWorkout(ctx *gin.Context) {
+	var workout models.Workout
+	err := ctx.BindJSON(&workout)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatusJSON(410, gin.H{"error": err.Error()})
+		return
+	}
+
+	_, err = db_connection.Exec("INSERT INTO Workouts (Location, Notes) VALUES (?, ?)", &workout.Location, &workout.Notes)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(500)
+		return
+	}
+
+	ctx.JSON(201, "workout sucessfully created")
+
+}
