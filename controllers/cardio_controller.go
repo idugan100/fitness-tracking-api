@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"fitness-tracker-api/testbackend/database"
+	"database/sql"
 	"fitness-tracker-api/testbackend/models"
 	"log"
 
@@ -10,7 +10,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetCardioById(ctx *gin.Context) {
+type CardioController struct {
+	DB *sql.DB
+}
+
+func (cc *CardioController) GetCardioById(ctx *gin.Context) {
 	//validate id input
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -20,7 +24,7 @@ func GetCardioById(ctx *gin.Context) {
 	}
 
 	//get result from database and read into struct
-	row, err := database.DB_connection.Query("SELECT * FROM Cardio WHERE id=?", id)
+	row, err := cc.DB.Query("SELECT * FROM Cardio WHERE id=?", id)
 
 	if err != nil {
 		log.Print(err)
@@ -46,8 +50,8 @@ func GetCardioById(ctx *gin.Context) {
 	ctx.JSON(200, cardio)
 }
 
-func GetAllCardio(ctx *gin.Context) {
-	rows, err := database.DB_connection.Query("SELECT * FROM Cardio")
+func (cc *CardioController) GetAllCardio(ctx *gin.Context) {
+	rows, err := cc.DB.Query("SELECT * FROM Cardio")
 
 	if err != nil {
 		log.Print(err)
@@ -73,13 +77,13 @@ func GetAllCardio(ctx *gin.Context) {
 	ctx.JSON(200, cardio_list)
 }
 
-func SearchCardioByName(ctx *gin.Context) {
+func (cc *CardioController) SearchCardioByName(ctx *gin.Context) {
 	search := ctx.Query("name")
 	if search == "" {
 		ctx.JSON(400, "missing name query parameter")
 	}
 
-	rows, err := database.DB_connection.Query("SELECT * FROM Cardio WHERE Name LIKE ?", "%"+search+"%")
+	rows, err := cc.DB.Query("SELECT * FROM Cardio WHERE Name LIKE ?", "%"+search+"%")
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
@@ -101,14 +105,14 @@ func SearchCardioByName(ctx *gin.Context) {
 	ctx.JSON(200, cardio_list)
 }
 
-func DeleteCardio(ctx *gin.Context) {
+func (cc *CardioController) DeleteCardio(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
 		return
 	}
-	res, err := database.DB_connection.Exec("DELETE FROM Cardio WHERE id=?", id)
+	res, err := cc.DB.Exec("DELETE FROM Cardio WHERE id=?", id)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
@@ -131,7 +135,7 @@ func DeleteCardio(ctx *gin.Context) {
 	ctx.JSON(200, "cardio successfully deleted")
 }
 
-func AddCardio(ctx *gin.Context) {
+func (cc *CardioController) AddCardio(ctx *gin.Context) {
 	var cardio models.Cardio
 	err := ctx.BindJSON(&cardio)
 	if err != nil {
@@ -139,7 +143,7 @@ func AddCardio(ctx *gin.Context) {
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	_, err = database.DB_connection.Exec("INSERT INTO Cardio (name) VALUES (?)", cardio.Name)
+	_, err = cc.DB.Exec("INSERT INTO Cardio (name) VALUES (?)", cardio.Name)
 
 	if err != nil {
 		log.Print(err)

@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"fitness-tracker-api/testbackend/database"
+	"database/sql"
 	"fitness-tracker-api/testbackend/models"
 	"log"
 	"strconv"
@@ -9,7 +9,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetWorkout(ctx *gin.Context) {
+type WorkoutController struct {
+	DB *sql.DB
+}
+
+func (wc *WorkoutController) GetWorkout(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
@@ -17,7 +21,7 @@ func GetWorkout(ctx *gin.Context) {
 		return
 	}
 
-	row, err := database.DB_connection.Query("SELECT * FROM Workouts WHERE id=?", id)
+	row, err := wc.DB.Query("SELECT * FROM Workouts WHERE id=?", id)
 
 	if err != nil {
 		log.Print(err)
@@ -43,9 +47,9 @@ func GetWorkout(ctx *gin.Context) {
 	ctx.JSON(200, workout)
 }
 
-func GetAllWorkouts(ctx *gin.Context) {
+func (wc *WorkoutController) GetAllWorkouts(ctx *gin.Context) {
 
-	rows, err := database.DB_connection.Query("SELECT * FROM Workouts")
+	rows, err := wc.DB.Query("SELECT * FROM Workouts")
 
 	if err != nil {
 		log.Print(err)
@@ -71,14 +75,14 @@ func GetAllWorkouts(ctx *gin.Context) {
 	ctx.JSON(200, workouts)
 }
 
-func DeleteWorkout(ctx *gin.Context) {
+func (wc *WorkoutController) DeleteWorkout(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatusJSON(400, "invalid id parameter")
 		return
 	}
-	res, err := database.DB_connection.Exec("DELETE FROM Workouts WHERE id=?", id)
+	res, err := wc.DB.Exec("DELETE FROM Workouts WHERE id=?", id)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
@@ -101,7 +105,7 @@ func DeleteWorkout(ctx *gin.Context) {
 	ctx.JSON(200, "workout sucessfully deleted")
 }
 
-func AddWorkout(ctx *gin.Context) {
+func (wc *WorkoutController) AddWorkout(ctx *gin.Context) {
 	var workout models.Workout
 	err := ctx.BindJSON(&workout)
 	if err != nil {
@@ -110,7 +114,7 @@ func AddWorkout(ctx *gin.Context) {
 		return
 	}
 
-	_, err = database.DB_connection.Exec("INSERT INTO Workouts (Location, Notes) VALUES (?, ?)", &workout.Location, &workout.Notes)
+	_, err = wc.DB.Exec("INSERT INTO Workouts (Location, Notes) VALUES (?, ?)", &workout.Location, &workout.Notes)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)

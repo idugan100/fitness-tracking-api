@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"fitness-tracker-api/testbackend/database"
+	"database/sql"
 	"fitness-tracker-api/testbackend/models"
 	"log"
 
@@ -10,7 +10,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetLift(ctx *gin.Context) {
+type LiftController struct {
+	DB *sql.DB
+}
+
+func (lc *LiftController) GetLift(ctx *gin.Context) {
 	//validate id input
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -20,7 +24,7 @@ func GetLift(ctx *gin.Context) {
 	}
 	//get result from database and read into struct
 
-	row, err := database.DB_connection.Query("SELECT * FROM LIFTS WHERE id=?", id)
+	row, err := lc.DB.Query("SELECT * FROM LIFTS WHERE id=?", id)
 
 	if err != nil {
 		log.Print(err)
@@ -46,8 +50,8 @@ func GetLift(ctx *gin.Context) {
 	ctx.JSON(200, lift)
 }
 
-func GetAllLifts(ctx *gin.Context) {
-	rows, err := database.DB_connection.Query("SELECT * FROM LIFTS")
+func (lc *LiftController) GetAllLifts(ctx *gin.Context) {
+	rows, err := lc.DB.Query("SELECT * FROM LIFTS")
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
@@ -69,13 +73,13 @@ func GetAllLifts(ctx *gin.Context) {
 	ctx.JSON(200, lifts)
 }
 
-func SearchLiftsByName(ctx *gin.Context) {
+func (lc *LiftController) SearchLiftsByName(ctx *gin.Context) {
 	search_name := ctx.Query("name")
 	if search_name == "" {
 		ctx.JSON(400, "missing name query parameter")
 		return
 	}
-	rows, err := database.DB_connection.Query("SELECT * FROM Lifts WHERE name like ?", "%"+search_name+"%")
+	rows, err := lc.DB.Query("SELECT * FROM Lifts WHERE name like ?", "%"+search_name+"%")
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
@@ -99,7 +103,7 @@ func SearchLiftsByName(ctx *gin.Context) {
 	ctx.JSON(200, lifts)
 }
 
-func DeleteLift(ctx *gin.Context) {
+func (lc *LiftController) DeleteLift(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
@@ -107,7 +111,7 @@ func DeleteLift(ctx *gin.Context) {
 		return
 	}
 
-	res, err := database.DB_connection.Exec("DELETE FROM Lifts WHERE id=?", id)
+	res, err := lc.DB.Exec("DELETE FROM Lifts WHERE id=?", id)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
@@ -131,7 +135,7 @@ func DeleteLift(ctx *gin.Context) {
 
 }
 
-func AddLift(ctx *gin.Context) {
+func (lc *LiftController) AddLift(ctx *gin.Context) {
 	var new_lift models.Lift
 	err := ctx.BindJSON(&new_lift)
 	if err != nil {
@@ -140,7 +144,7 @@ func AddLift(ctx *gin.Context) {
 		return
 	}
 
-	_, err = database.DB_connection.Exec("INSERT INTO Lifts (name, compound, upper, lower) Values (?,?,?,?) ", new_lift.Name, new_lift.Compound, new_lift.Upper, new_lift.Lower)
+	_, err = lc.DB.Exec("INSERT INTO Lifts (name, compound, upper, lower) Values (?,?,?,?) ", new_lift.Name, new_lift.Compound, new_lift.Upper, new_lift.Lower)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
