@@ -19,7 +19,7 @@ func main() {
 		lift_group.GET("/:id", controllers.GetLift)
 		lift_group.GET("", controllers.GetAllLifts)
 		lift_group.GET("/search", controllers.SearchLiftsByName)
-		lift_group.DELETE("/delete/:id", controllers.DeleteLift)
+		lift_group.DELETE("/:id", controllers.DeleteLift)
 		lift_group.POST("", controllers.AddLift)
 	}
 

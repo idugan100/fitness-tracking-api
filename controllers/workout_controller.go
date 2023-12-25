@@ -93,7 +93,7 @@ func DeleteWorkout(ctx *gin.Context) {
 	}
 
 	if rows_deleted == 0 {
-		log.Print("unsucessfull deletion")
+		log.Print("Unsuccessful Deletion - Resource Not Found")
 		ctx.AbortWithStatus(410)
 		return
 	}

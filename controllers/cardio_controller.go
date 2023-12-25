@@ -108,10 +108,23 @@ func DeleteCardio(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-	_, err = database.DB_connection.Exec("DELETE FROM Cardio WHERE id=?", id)
+	res, err := database.DB_connection.Exec("DELETE FROM Cardio WHERE id=?", id)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
+		return
+	}
+
+	rows_affected, err := res.RowsAffected()
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(500)
+		return
+	}
+
+	if rows_affected == 0 {
+		log.Print("Unsuccessful Deletion - Resource Not Found")
+		ctx.AbortWithStatus(410)
 		return
 	}
 

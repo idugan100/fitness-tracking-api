@@ -107,10 +107,23 @@ func DeleteLift(ctx *gin.Context) {
 		return
 	}
 
-	_, err = database.DB_connection.Exec("DELETE FROM Lifts WHERE id=?", id)
+	res, err := database.DB_connection.Exec("DELETE FROM Lifts WHERE id=?", id)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
+		return
+	}
+
+	rows_deleted, err := res.RowsAffected()
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(500)
+		return
+	}
+
+	if rows_deleted == 0 {
+		log.Print("Unsuccessful Deletion - Resource Not Found")
+		ctx.AbortWithStatus(410)
 		return
 	}
 
