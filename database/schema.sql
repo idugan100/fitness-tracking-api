@@ -26,12 +26,16 @@ Create Table LiftingLog (
     lift_id INTEGER NOT NULL,
     weight INTEGER NOT NULL,
     sets INTEGER NOT NULL,
-    reps INTEGER NOT NULL
+    reps INTEGER NOT NULL,
+    workout_id INTEGER NOT NULL,
+    FOREIGN KEY (workout_id) REFERENCES Workouts(id)
 );
 
 Create Table CardioLog (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     cardio_id INTEGER NOT NULL,
     time INTEGER,
-    distance INTEGER
+    distance INTEGER,
+    workout_id INTEGER NOT NULL,
+    FOREIGN KEY(workout_id) REFERENCES Workouts(id)
 );
