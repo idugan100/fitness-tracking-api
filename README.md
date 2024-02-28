@@ -1,4 +1,3 @@
 # fitness-tracking-api
-A JSON api written in go for tracking your fitness routine.
+A JSON api written in go for tracking a fitness routine that uses SQLite and the Gin web framework.
 
-[some ideas about my database access structure](https://www.alexedwards.net/blog/organising-database-access)
