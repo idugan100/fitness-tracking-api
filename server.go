@@ -48,6 +48,10 @@ func main() {
 	workout_log_group := server.Group("/workoutlog")
 	{
 		workout_log_group.GET("", workoutLogController.GetAllWorkoutLogs)
+		workout_log_group.GET("/:id", workoutLogController.GetWorkoutLogById)
+		workout_log_group.GET("/workout/:workoutid", workoutLogController.WorkoutLogsByWorkout)
+		workout_log_group.DELETE("/:id", workoutLogController.DeleteWorkoutLog)
+		workout_log_group.POST("", workoutLogController.AddWorkoutLog)
 	}
 
 	workout_group := server.Group("/workouts")
