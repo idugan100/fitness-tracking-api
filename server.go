@@ -25,6 +25,7 @@ func main() {
 	liftController := &controllers.LiftController{DB: db}
 	cardioController := &controllers.CardioController{DB: db}
 	workoutController := &controllers.WorkoutController{DB: db}
+	workoutLogController := &controllers.WorkoutLogController{DB: db}
 
 	lift_group := server.Group("/lifts")
 	{
@@ -44,6 +45,11 @@ func main() {
 		cardio_group.POST("", cardioController.AddCardio)
 	}
 
+	workout_log_group := server.Group("/workoutlog")
+	{
+		workout_log_group.GET("", workoutLogController.GetAllWorkoutLogs)
+	}
+
 	workout_group := server.Group("/workouts")
 	{
 		workout_group.GET("", workoutController.GetAllWorkouts)
@@ -51,6 +57,7 @@ func main() {
 		workout_group.DELETE("/:id", workoutController.DeleteWorkout)
 		workout_group.POST("", workoutController.AddWorkout)
 	}
+
 	server.GET("/documentation", func(ctx *gin.Context) {
 		tmp, err := template.ParseFiles("./templates/documentation.tmpl")
 		if err != nil {
