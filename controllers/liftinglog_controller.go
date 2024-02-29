@@ -72,7 +72,41 @@ func (lc *LiftingLogController) GetWorkoutLogById(ctx *gin.Context) {
 }
 
 func (lc *LiftingLogController) WorkoutLogsByWorkout(ctx *gin.Context) {
-	ctx.JSON(200, "hello")
+	workout_id, err := strconv.Atoi(ctx.Param("workoutid"))
+	log.Print(workout_id)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatusJSON(500, "invalid workout id")
+		return
+	}
+	rows, err := lc.DB.Query("SELECT * FROM LiftingLog WHERE workout_id=?", workout_id)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(500)
+		return
+	}
+	defer rows.Close()
+
+	var lifting_logs []models.LiftingLog
+
+	for rows.Next() {
+		log.Print("hi")
+		var lifting_log models.LiftingLog
+		err = rows.Scan(&lifting_log.Id, &lifting_log.LiftId, &lifting_log.Reps, &lifting_log.Sets, &lifting_log.Weight, &lifting_log.WorkoutId)
+		if err != nil {
+			log.Print(err)
+			ctx.AbortWithStatus(500)
+			return
+		}
+		lifting_logs = append(lifting_logs, lifting_log)
+	}
+
+	if len(lifting_logs) == 0 {
+		ctx.AbortWithStatus(404)
+		return
+	}
+	ctx.JSON(200, lifting_logs)
+
 }
 
 func (lc *LiftingLogController) DeleteWorkoutLog(ctx *gin.Context) {
