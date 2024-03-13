@@ -131,7 +131,7 @@ func (lc *LiftController) DeleteLift(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(200, "lift sucessfully deleted")
+	ctx.JSON(200, "lift successfully deleted")
 
 }
 
