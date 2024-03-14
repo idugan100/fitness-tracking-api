@@ -6,26 +6,26 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CardiologController struct {
+type CardioLogController struct {
 	DB *sql.DB
 }
 
-func (c *CardioController) GetAllCardioLogs(ctx *gin.Context) {
+func (c *CardioLogController) GetAllCardioLogs(ctx *gin.Context) {
 	ctx.JSON(200, "hi")
 }
 
-func (c *CardioController) GetCardioLogById(ctx *gin.Context) {
+func (c *CardioLogController) GetCardioLogById(ctx *gin.Context) {
 	ctx.JSON(200, "hi")
 }
 
-func (c *CardioController) CardioLogsByWorkout(ctx *gin.Context) {
+func (c *CardioLogController) CardioLogsByWorkout(ctx *gin.Context) {
 	ctx.JSON(200, "hi")
 }
 
-func (c *CardioController) DeleteCardioLog(ctx *gin.Context) {
+func (c *CardioLogController) DeleteCardioLog(ctx *gin.Context) {
 	ctx.JSON(200, "hi")
 }
 
-func (c *CardioController) AddCardioLog(ctx *gin.Context) {
+func (c *CardioLogController) AddCardioLog(ctx *gin.Context) {
 	ctx.JSON(200, "hi")
 }

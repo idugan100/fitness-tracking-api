@@ -26,6 +26,7 @@ func main() {
 	cardioController := &controllers.CardioController{DB: db}
 	workoutController := &controllers.WorkoutController{DB: db}
 	liftingLogController := &controllers.LiftingLogController{DB: db}
+	cardioLogController := &controllers.CardioLogController{}
 
 	lift_group := server.Group("/lifts")
 	{
@@ -34,6 +35,15 @@ func main() {
 		lift_group.GET("/search", liftController.SearchLiftsByName)
 		lift_group.DELETE("/:id", liftController.DeleteLift)
 		lift_group.POST("", liftController.AddLift)
+	}
+
+	cardio_log_group := server.Group("/cardiolog")
+	{
+		cardio_log_group.GET("", cardioLogController.GetAllCardioLogs)
+		cardio_log_group.GET("/:id", cardioLogController.GetCardioLogById)
+		cardio_log_group.GET("/workout/:workoutid", cardioLogController.CardioLogsByWorkout)
+		cardio_log_group.DELETE("/:id", cardioLogController.DeleteCardioLog)
+		cardio_log_group.POST("/", cardioLogController.AddCardioLog)
 	}
 
 	cardio_group := server.Group("/cardio")
