@@ -71,7 +71,7 @@ func (lc *LiftingLogController) GetWorkoutLogById(ctx *gin.Context) {
 	ctx.JSON(200, lifting_log)
 }
 
-func (lc *LiftingLogController) WorkoutLogsByWorkout(ctx *gin.Context) {
+func (lc *LiftingLogController) LiftingLogsByWorkout(ctx *gin.Context) {
 	workout_id, err := strconv.Atoi(ctx.Param("workoutid"))
 	log.Print(workout_id)
 	if err != nil {

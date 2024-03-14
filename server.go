@@ -49,7 +49,7 @@ func main() {
 	{
 		workout_log_group.GET("", liftingLogController.GetAllWorkoutLogs)
 		workout_log_group.GET("/:id", liftingLogController.GetWorkoutLogById)
-		workout_log_group.GET("/workout/:workoutid", liftingLogController.WorkoutLogsByWorkout)
+		workout_log_group.GET("/workout/:workoutid", liftingLogController.LiftingLogsByWorkout)
 		workout_log_group.DELETE("/:id", liftingLogController.DeleteWorkoutLog)
 		workout_log_group.POST("", liftingLogController.AddWorkoutLog)
 	}
