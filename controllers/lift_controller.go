@@ -22,8 +22,8 @@ func (lc *LiftController) GetLift(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(500, "invalid id parameter")
 		return
 	}
-	//get result from database and read into struct
 
+	//start repo
 	row, err := lc.DB.Query("SELECT * FROM LIFTS WHERE id=?", id)
 
 	if err != nil {
@@ -46,11 +46,12 @@ func (lc *LiftController) GetLift(ctx *gin.Context) {
 		ctx.AbortWithStatus(500)
 		return
 	}
-
+	//end repo
 	ctx.JSON(200, lift)
 }
 
 func (lc *LiftController) GetAllLifts(ctx *gin.Context) {
+	//start repo
 	rows, err := lc.DB.Query("SELECT * FROM LIFTS")
 	if err != nil {
 		log.Print(err)
@@ -70,6 +71,7 @@ func (lc *LiftController) GetAllLifts(ctx *gin.Context) {
 			lifts = append(lifts, lift)
 		}
 	}
+	//end repo
 	ctx.JSON(200, lifts)
 }
 
@@ -79,6 +81,7 @@ func (lc *LiftController) SearchLiftsByName(ctx *gin.Context) {
 		ctx.JSON(400, "missing name query parameter")
 		return
 	}
+	//start repo
 	rows, err := lc.DB.Query("SELECT * FROM Lifts WHERE name like ?", "%"+search_name+"%")
 	if err != nil {
 		log.Print(err)
@@ -100,6 +103,7 @@ func (lc *LiftController) SearchLiftsByName(ctx *gin.Context) {
 			lifts = append(lifts, lift)
 		}
 	}
+	//end repo
 	ctx.JSON(200, lifts)
 }
 
@@ -111,6 +115,7 @@ func (lc *LiftController) DeleteLift(ctx *gin.Context) {
 		return
 	}
 
+	//start repo
 	res, err := lc.DB.Exec("DELETE FROM Lifts WHERE id=?", id)
 	if err != nil {
 		log.Print(err)
@@ -119,6 +124,7 @@ func (lc *LiftController) DeleteLift(ctx *gin.Context) {
 	}
 
 	rows_deleted, err := res.RowsAffected()
+	//end repo
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
@@ -144,7 +150,9 @@ func (lc *LiftController) AddLift(ctx *gin.Context) {
 		return
 	}
 
+	//start repo
 	_, err = lc.DB.Exec("INSERT INTO Lifts (name, compound, upper, lower) Values (?,?,?,?) ", new_lift.Name, new_lift.Compound, new_lift.Upper, new_lift.Lower)
+	//end repo
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(500)
