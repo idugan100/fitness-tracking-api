@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fitness-tracker-api/testbackend/models"
 	"log"
-
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +19,7 @@ func (cc *CardioController) GetCardioById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
-		ctx.AbortWithStatusJSON(500, "invalid id parameter")
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, "invalid id parameter")
 		return
 	}
 
@@ -28,7 +28,7 @@ func (cc *CardioController) GetCardioById(ctx *gin.Context) {
 
 	if err != nil {
 		log.Print(err)
-		ctx.AbortWithStatus(500)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 	defer row.Close()
@@ -37,17 +37,17 @@ func (cc *CardioController) GetCardioById(ctx *gin.Context) {
 	row_found := row.Next()
 
 	if !row_found {
-		ctx.AbortWithStatus(404)
+		ctx.AbortWithStatus(http.StatusNotFound)
 		return
 	}
 	err = row.Scan(&cardio.Id, &cardio.Name)
 	if err != nil {
 		log.Print(row, err)
-		ctx.AbortWithStatus(500)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
-	ctx.JSON(200, cardio)
+	ctx.JSON(http.StatusOK, cardio)
 }
 
 func (cc *CardioController) GetAllCardio(ctx *gin.Context) {
@@ -55,7 +55,7 @@ func (cc *CardioController) GetAllCardio(ctx *gin.Context) {
 
 	if err != nil {
 		log.Print(err)
-		ctx.AbortWithStatus(500)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()
@@ -67,26 +67,26 @@ func (cc *CardioController) GetAllCardio(ctx *gin.Context) {
 		err = rows.Scan(&cardio.Id, &cardio.Name)
 		if err != nil {
 			log.Print(err)
-			ctx.AbortWithStatus(500)
+			ctx.AbortWithStatus(http.StatusInternalServerError)
 			return
 		} else {
 			cardio_list = append(cardio_list, cardio)
 		}
 	}
 
-	ctx.JSON(200, cardio_list)
+	ctx.JSON(http.StatusOK, cardio_list)
 }
 
 func (cc *CardioController) SearchCardioByName(ctx *gin.Context) {
 	search := ctx.Query("name")
 	if search == "" {
-		ctx.JSON(400, "missing name query parameter")
+		ctx.JSON(http.StatusBadRequest, "missing name query parameter")
 	}
 
 	rows, err := cc.DB.Query("SELECT * FROM Cardio WHERE Name LIKE ?", "%"+search+"%")
 	if err != nil {
 		log.Print(err)
-		ctx.AbortWithStatus(500)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()
@@ -97,42 +97,42 @@ func (cc *CardioController) SearchCardioByName(ctx *gin.Context) {
 		err = rows.Scan(&cardio.Id, &cardio.Name)
 		if err != nil {
 			log.Print(cardio, err)
-			ctx.AbortWithStatus(500)
+			ctx.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
 		cardio_list = append(cardio_list, cardio)
 	}
-	ctx.JSON(200, cardio_list)
+	ctx.JSON(http.StatusOK, cardio_list)
 }
 
 func (cc *CardioController) DeleteCardio(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
-		ctx.AbortWithStatus(500)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 	res, err := cc.DB.Exec("DELETE FROM Cardio WHERE id=?", id)
 	if err != nil {
 		log.Print(err)
-		ctx.AbortWithStatus(500)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
 	rows_affected, err := res.RowsAffected()
 	if err != nil {
 		log.Print(err)
-		ctx.AbortWithStatus(500)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
 	if rows_affected == 0 {
 		log.Print("Unsuccessful Deletion - Resource Not Found")
-		ctx.AbortWithStatus(410)
+		ctx.AbortWithStatus(http.StatusGone)
 		return
 	}
 
-	ctx.JSON(200, "cardio successfully deleted")
+	ctx.JSON(http.StatusOK, "cardio successfully deleted")
 }
 
 func (cc *CardioController) AddCardio(ctx *gin.Context) {
@@ -140,15 +140,15 @@ func (cc *CardioController) AddCardio(ctx *gin.Context) {
 	err := ctx.BindJSON(&cardio)
 	if err != nil {
 		log.Print(err)
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	_, err = cc.DB.Exec("INSERT INTO Cardio (name) VALUES (?)", cardio.Name)
 
 	if err != nil {
 		log.Print(err)
-		ctx.AbortWithStatus(500)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	ctx.JSON(201, "cardio sucessfully created")
+	ctx.JSON(http.StatusCreated, "cardio sucessfully created")
 }
