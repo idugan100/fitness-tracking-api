@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fitness-tracker-api/testbackend/models"
 	"log"
-
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +19,7 @@ func (lc *LiftController) GetLift(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
-		ctx.AbortWithStatusJSON(500, "invalid id parameter")
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, "invalid id parameter")
 		return
 	}
 
@@ -28,7 +28,7 @@ func (lc *LiftController) GetLift(ctx *gin.Context) {
 
 	if err != nil {
 		log.Print(err)
-		ctx.AbortWithStatus(500)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 	defer row.Close()
@@ -37,17 +37,17 @@ func (lc *LiftController) GetLift(ctx *gin.Context) {
 	row_found := row.Next()
 
 	if !row_found {
-		ctx.AbortWithStatus(404)
+		ctx.AbortWithStatus(http.StatusNotFound)
 		return
 	}
 	err = row.Scan(&lift.Id, &lift.Name, &lift.Compound, &lift.Upper, &lift.Lower)
 	if err != nil {
 		log.Print(row, err)
-		ctx.AbortWithStatus(500)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 	//end repo
-	ctx.JSON(200, lift)
+	ctx.JSON(http.StatusOK, lift)
 }
 
 func (lc *LiftController) GetAllLifts(ctx *gin.Context) {
@@ -55,7 +55,7 @@ func (lc *LiftController) GetAllLifts(ctx *gin.Context) {
 	rows, err := lc.DB.Query("SELECT * FROM LIFTS")
 	if err != nil {
 		log.Print(err)
-		ctx.AbortWithStatus(500)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 	}
 	defer rows.Close()
 
@@ -65,27 +65,27 @@ func (lc *LiftController) GetAllLifts(ctx *gin.Context) {
 		err = rows.Scan(&lift.Id, &lift.Name, &lift.Compound, &lift.Upper, &lift.Lower)
 		if err != nil {
 			log.Print(lift, err)
-			ctx.AbortWithStatus(500)
+			ctx.AbortWithStatus(http.StatusInternalServerError)
 			return
 		} else {
 			lifts = append(lifts, lift)
 		}
 	}
 	//end repo
-	ctx.JSON(200, lifts)
+	ctx.JSON(http.StatusOK, lifts)
 }
 
 func (lc *LiftController) SearchLiftsByName(ctx *gin.Context) {
 	search_name := ctx.Query("name")
 	if search_name == "" {
-		ctx.JSON(400, "missing name query parameter")
+		ctx.JSON(http.StatusBadRequest, "missing name query parameter")
 		return
 	}
 	//start repo
 	rows, err := lc.DB.Query("SELECT * FROM Lifts WHERE name like ?", "%"+search_name+"%")
 	if err != nil {
 		log.Print(err)
-		ctx.AbortWithStatus(500)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()
@@ -97,21 +97,21 @@ func (lc *LiftController) SearchLiftsByName(ctx *gin.Context) {
 		log.Print(lift)
 		if err != nil {
 			log.Print(lift, err)
-			ctx.AbortWithStatus(500)
+			ctx.AbortWithStatus(http.StatusInternalServerError)
 			return
 		} else {
 			lifts = append(lifts, lift)
 		}
 	}
 	//end repo
-	ctx.JSON(200, lifts)
+	ctx.JSON(http.StatusOK, lifts)
 }
 
 func (lc *LiftController) DeleteLift(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
-		ctx.AbortWithStatus(500)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
@@ -119,7 +119,7 @@ func (lc *LiftController) DeleteLift(ctx *gin.Context) {
 	res, err := lc.DB.Exec("DELETE FROM Lifts WHERE id=?", id)
 	if err != nil {
 		log.Print(err)
-		ctx.AbortWithStatus(500)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
@@ -127,17 +127,17 @@ func (lc *LiftController) DeleteLift(ctx *gin.Context) {
 	//end repo
 	if err != nil {
 		log.Print(err)
-		ctx.AbortWithStatus(500)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
 	if rows_deleted == 0 {
 		log.Print("Unsuccessful Deletion - Resource Not Found")
-		ctx.AbortWithStatus(410)
+		ctx.AbortWithStatus(http.StatusGone)
 		return
 	}
 
-	ctx.JSON(200, "lift successfully deleted")
+	ctx.JSON(http.StatusOK, "lift successfully deleted")
 
 }
 
@@ -146,7 +146,7 @@ func (lc *LiftController) AddLift(ctx *gin.Context) {
 	err := ctx.BindJSON(&new_lift)
 	if err != nil {
 		log.Print(err)
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -155,9 +155,9 @@ func (lc *LiftController) AddLift(ctx *gin.Context) {
 	//end repo
 	if err != nil {
 		log.Print(err)
-		ctx.AbortWithStatus(500)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	ctx.JSON(201, "lift sucessfully created")
+	ctx.JSON(http.StatusCreated, "lift sucessfully created")
 
 }
