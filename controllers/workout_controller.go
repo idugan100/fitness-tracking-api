@@ -14,6 +14,10 @@ type WorkoutController struct {
 	DB *sql.DB
 }
 
+func NewWorkoutController(DB *sql.DB) *WorkoutController {
+	return &WorkoutController{DB}
+}
+
 func (wc *WorkoutController) GetWorkout(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {

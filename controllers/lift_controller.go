@@ -14,6 +14,10 @@ type LiftController struct {
 	DB *sql.DB
 }
 
+func NewLiftController(DB *sql.DB) *LiftController {
+	return &LiftController{DB}
+}
+
 func (lc *LiftController) GetLift(ctx *gin.Context) {
 	//validate id input
 	id, err := strconv.Atoi(ctx.Param("id"))

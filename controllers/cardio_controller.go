@@ -14,6 +14,9 @@ type CardioController struct {
 	DB *sql.DB
 }
 
+func NewCardioController(DB *sql.DB) *CardioController {
+	return &CardioController{DB}
+}
 func (cc *CardioController) GetCardioById(ctx *gin.Context) {
 	//validate id input
 	id, err := strconv.Atoi(ctx.Param("id"))

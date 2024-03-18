@@ -14,6 +14,10 @@ type LiftingLogController struct {
 	DB *sql.DB
 }
 
+func NewLiftingLogController(DB *sql.DB) *LiftingLogController {
+	return &LiftingLogController{DB}
+}
+
 func (lc *LiftingLogController) GetAllWorkoutLogs(ctx *gin.Context) {
 	rows, err := lc.DB.Query("SELECT * FROM LiftingLog")
 	if err != nil {

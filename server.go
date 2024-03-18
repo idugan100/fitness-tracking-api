@@ -23,11 +23,11 @@ func main() {
 	server.SetTrustedProxies([]string{"127.0.0.1"})
 	// server.LoadHTMLGlob("./templates/*")
 
-	liftController := &controllers.LiftController{DB: db}
-	cardioController := &controllers.CardioController{DB: db}
-	workoutController := &controllers.WorkoutController{DB: db}
-	liftingLogController := &controllers.LiftingLogController{DB: db}
-	cardioLogController := &controllers.CardioLogController{}
+	liftController := controllers.NewLiftController(db)
+	cardioController := controllers.NewCardioController(db)
+	workoutController := controllers.NewWorkoutController(db)
+	liftingLogController := controllers.NewLiftingLogController(db)
+	cardioLogController := controllers.NewCardioLogController(db)
 
 	lift_group := server.Group("/lifts")
 	{

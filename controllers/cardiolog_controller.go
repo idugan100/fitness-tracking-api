@@ -10,6 +10,10 @@ type CardioLogController struct {
 	DB *sql.DB
 }
 
+func NewCardioLogController(DB *sql.DB) *CardioLogController {
+	return &CardioLogController{DB}
+}
+
 func (c *CardioLogController) GetAllCardioLogs(ctx *gin.Context) {
 	ctx.JSON(200, "hi")
 }
