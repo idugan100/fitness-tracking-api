@@ -4,6 +4,7 @@ import (
 	"fitness-tracker-api/testbackend/controllers"
 	"fitness-tracker-api/testbackend/database"
 	"log"
+	"net/http"
 	"text/template"
 
 	"github.com/gin-gonic/gin"
@@ -75,14 +76,14 @@ func main() {
 	server.GET("/documentation", func(ctx *gin.Context) {
 		tmp, err := template.ParseFiles("./templates/documentation.tmpl")
 		if err != nil {
-			ctx.AbortWithStatus(500)
+			ctx.AbortWithStatus(http.StatusInternalServerError)
 			log.Print(err)
 			return
 		}
 		err = tmp.Execute(ctx.Writer, nil)
 		// ctx.HTML(http.StatusOK, "documentation.tmpl", nil)
 		if err != nil {
-			ctx.AbortWithStatus(500)
+			ctx.AbortWithStatus(http.StatusInternalServerError)
 			log.Print(err)
 			return
 		}
