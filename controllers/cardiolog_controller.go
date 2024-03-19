@@ -5,6 +5,7 @@ import (
 	"fitness-tracker-api/testbackend/models"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -41,7 +42,34 @@ func (c *CardioLogController) GetAllCardioLogs(ctx *gin.Context) {
 }
 
 func (c *CardioLogController) GetCardioLogById(ctx *gin.Context) {
-	ctx.JSON(200, "hi")
+	idString := ctx.Param("id")
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	rows, err := c.DB.Query("SELECT * FROM CardioLog WHERE id=?", id)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	if !rows.Next() {
+		ctx.AbortWithStatus(404)
+		return
+	}
+
+	var cardioLog models.CardioLog
+	err = rows.Scan(&cardioLog.Id, &cardioLog.CardioId, &cardioLog.Time, &cardioLog.Distance, &cardioLog.WorkoutId)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	ctx.JSON(200, cardioLog)
 }
 
 func (c *CardioLogController) CardioLogsByWorkout(ctx *gin.Context) {
