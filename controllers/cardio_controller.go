@@ -64,9 +64,9 @@ func (cc *CardioController) GetAllCardio(ctx *gin.Context) {
 	defer rows.Close()
 
 	var cardio_list []models.Cardio
+	var cardio models.Cardio
 
 	for rows.Next() {
-		var cardio models.Cardio
 		err = rows.Scan(&cardio.Id, &cardio.Name)
 		if err != nil {
 			log.Print(err)
@@ -94,9 +94,9 @@ func (cc *CardioController) SearchCardioByName(ctx *gin.Context) {
 	}
 	defer rows.Close()
 
+	var cardio models.Cardio
 	var cardio_list []models.Cardio
 	for rows.Next() {
-		var cardio models.Cardio
 		err = rows.Scan(&cardio.Id, &cardio.Name)
 		if err != nil {
 			log.Print(cardio, err)

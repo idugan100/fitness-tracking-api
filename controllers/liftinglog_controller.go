@@ -28,9 +28,8 @@ func (lc *LiftingLogController) GetAllWorkoutLogs(ctx *gin.Context) {
 	defer rows.Close()
 
 	var lifting_log_list []models.LiftingLog
-
+	var lifting_log models.LiftingLog
 	for rows.Next() {
-		var lifting_log models.LiftingLog
 		err = rows.Scan(&lifting_log.Id, &lifting_log.LiftId, &lifting_log.Weight, &lifting_log.Sets, &lifting_log.Reps, &lifting_log.WorkoutId)
 		if err != nil {
 			log.Print(err)
@@ -93,9 +92,8 @@ func (lc *LiftingLogController) LiftingLogsByWorkout(ctx *gin.Context) {
 	defer rows.Close()
 
 	var lifting_logs []models.LiftingLog
-
+	var lifting_log models.LiftingLog
 	for rows.Next() {
-		var lifting_log models.LiftingLog
 		err = rows.Scan(&lifting_log.Id, &lifting_log.LiftId, &lifting_log.Reps, &lifting_log.Sets, &lifting_log.Weight, &lifting_log.WorkoutId)
 		if err != nil {
 			log.Print(err)

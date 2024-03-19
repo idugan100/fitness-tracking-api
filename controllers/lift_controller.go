@@ -64,8 +64,8 @@ func (lc *LiftController) GetAllLifts(ctx *gin.Context) {
 	defer rows.Close()
 
 	var lifts []models.Lift
+	var lift models.Lift
 	for rows.Next() {
-		var lift models.Lift
 		err = rows.Scan(&lift.Id, &lift.Name, &lift.Compound, &lift.Upper, &lift.Lower)
 		if err != nil {
 			log.Print(lift, err)

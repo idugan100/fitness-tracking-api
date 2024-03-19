@@ -64,9 +64,8 @@ func (wc *WorkoutController) GetAllWorkouts(ctx *gin.Context) {
 	defer rows.Close()
 
 	var workouts []models.Workout
-
+	var workout models.Workout
 	for rows.Next() {
-		var workout models.Workout
 		err = rows.Scan(&workout.Id, &workout.Location, &workout.Notes, &workout.Date)
 		if err != nil {
 			log.Print(err)
