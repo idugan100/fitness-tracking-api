@@ -44,7 +44,7 @@ func main() {
 		cardio_log_group.GET("/:id", cardioLogController.GetCardioLogById)
 		cardio_log_group.GET("/workout/:workoutid", cardioLogController.CardioLogsByWorkout)
 		cardio_log_group.DELETE("/:id", cardioLogController.DeleteCardioLog)
-		cardio_log_group.POST("/", cardioLogController.AddCardioLog)
+		cardio_log_group.POST("", cardioLogController.AddCardioLog)
 	}
 
 	cardio_group := server.Group("/cardio")

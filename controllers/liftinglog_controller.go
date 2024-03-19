@@ -146,7 +146,6 @@ func (lc *LiftingLogController) AddWorkoutLog(ctx *gin.Context) {
 	err := ctx.BindJSON(&lifting_log)
 	if err != nil {
 		log.Print(err)
-		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 	//check if lift id and workout id exists

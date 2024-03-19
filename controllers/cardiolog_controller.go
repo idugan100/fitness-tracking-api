@@ -113,5 +113,52 @@ func (c *CardioLogController) DeleteCardioLog(ctx *gin.Context) {
 }
 
 func (c *CardioLogController) AddCardioLog(ctx *gin.Context) {
-	ctx.JSON(200, "hi")
+	var cardioLog models.CardioLog
+
+	err := ctx.BindJSON(&cardioLog)
+	if err != nil {
+		log.Print(err)
+		return
+	}
+
+	if cardioLog.Time <= 0 {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, "time must be positive")
+		return
+	} else if cardioLog.Distance <= 0 {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, "distance must be positive")
+		return
+	}
+
+	res, err := c.DB.Query("SELECT * FROM Workouts where id=?", cardioLog.WorkoutId)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	if !res.Next() {
+		ctx.AbortWithStatusJSON(http.StatusNotFound, "workout id does not exist")
+		return
+	}
+	res.Close()
+
+	res, err = c.DB.Query("SELECT * FROM Cardio where id=?", cardioLog.CardioId)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	if !res.Next() {
+		ctx.AbortWithStatusJSON(http.StatusNotFound, "lift id does not exist")
+		return
+	}
+	res.Close()
+
+	_, err = c.DB.Exec("INSERT INTO CardioLog (cardio_id, time, distance, workout_id) VALUES (?,?,?,?)", cardioLog.CardioId, cardioLog.Time, cardioLog.Distance, cardioLog.WorkoutId)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	ctx.Status(http.StatusCreated)
 }
