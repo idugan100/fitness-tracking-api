@@ -56,9 +56,10 @@ func (c *CardioLogController) GetCardioLogById(ctx *gin.Context) {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
+	defer rows.Close()
 
 	if !rows.Next() {
-		ctx.AbortWithStatus(404)
+		ctx.AbortWithStatus(http.StatusNotFound)
 		return
 	}
 
@@ -69,11 +70,42 @@ func (c *CardioLogController) GetCardioLogById(ctx *gin.Context) {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	ctx.JSON(200, cardioLog)
+	ctx.JSON(http.StatusOK, cardioLog)
 }
 
 func (c *CardioLogController) CardioLogsByWorkout(ctx *gin.Context) {
-	ctx.JSON(200, "hi")
+	workoutIdString := ctx.Param("workoutid")
+	workoutId, err := strconv.Atoi(workoutIdString)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	rows, err := c.DB.Query("SELECT * FROM CardioLog WHERE workout_id=?", workoutId)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+	}
+	defer rows.Close()
+
+	var cardioLogList []models.CardioLog
+
+	for rows.Next() {
+		var cardioLog models.CardioLog
+		err := rows.Scan(&cardioLog.Id, &cardioLog.CardioId, &cardioLog.Time, &cardioLog.Distance, &cardioLog.WorkoutId)
+		if err != nil {
+			log.Print(err)
+			ctx.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+		cardioLogList = append(cardioLogList, cardioLog)
+	}
+
+	if len(cardioLogList) == 0 {
+		ctx.AbortWithStatus(http.StatusNotFound)
+	}
+	ctx.JSON(http.StatusOK, cardioLogList)
 }
 
 func (c *CardioLogController) DeleteCardioLog(ctx *gin.Context) {
