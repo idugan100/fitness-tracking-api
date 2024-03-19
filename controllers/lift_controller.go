@@ -140,6 +140,12 @@ func (lc *LiftController) DeleteLift(ctx *gin.Context) {
 		ctx.AbortWithStatus(http.StatusGone)
 		return
 	}
+	_, err = lc.DB.Exec("DELETE FROM LiftingLog WHERE lift_id=?", id)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
 
 	ctx.JSON(http.StatusOK, "lift successfully deleted")
 
