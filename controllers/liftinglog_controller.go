@@ -95,7 +95,6 @@ func (lc *LiftingLogController) LiftingLogsByWorkout(ctx *gin.Context) {
 	var lifting_logs []models.LiftingLog
 
 	for rows.Next() {
-		log.Print("hi")
 		var lifting_log models.LiftingLog
 		err = rows.Scan(&lifting_log.Id, &lifting_log.LiftId, &lifting_log.Reps, &lifting_log.Sets, &lifting_log.Weight, &lifting_log.WorkoutId)
 		if err != nil {
