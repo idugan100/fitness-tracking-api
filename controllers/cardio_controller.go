@@ -135,6 +135,13 @@ func (cc *CardioController) DeleteCardio(ctx *gin.Context) {
 		return
 	}
 
+	_, err = cc.DB.Exec("DELETE FROM CardioLog WHERE cardio_id=?", id)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
 	ctx.JSON(http.StatusOK, "cardio successfully deleted")
 }
 
