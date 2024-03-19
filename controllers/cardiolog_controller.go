@@ -109,7 +109,32 @@ func (c *CardioLogController) CardioLogsByWorkout(ctx *gin.Context) {
 }
 
 func (c *CardioLogController) DeleteCardioLog(ctx *gin.Context) {
-	ctx.JSON(200, "hi")
+	idString := ctx.Param("id")
+	cardioLogId, err := strconv.Atoi(idString)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+	res, err := c.DB.Exec("DELETE FROM CardioLog WHERE id=?", cardioLogId)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	rows_affected, err := res.RowsAffected()
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	if rows_affected == 0 {
+		log.Print("unsuccessful deletion attempt")
+		ctx.AbortWithStatus(http.StatusGone)
+		return
+	}
+	ctx.Status(http.StatusOK)
 }
 
 func (c *CardioLogController) AddCardioLog(ctx *gin.Context) {
