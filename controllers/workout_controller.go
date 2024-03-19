@@ -107,6 +107,20 @@ func (wc *WorkoutController) DeleteWorkout(ctx *gin.Context) {
 		return
 	}
 
+	_, err = wc.DB.Exec("DELETE FROM CardioLog where workout_id=?", id)
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	_, err = wc.DB.Exec("DELETE FROM LiftingLog where workout_id=?", id)
+
+	if err != nil {
+		log.Print(err)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
 	ctx.JSON(http.StatusOK, "workout sucessfully deleted")
 }
 
