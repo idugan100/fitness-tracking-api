@@ -18,8 +18,8 @@ func NewLiftingLogController(DB *sql.DB) LiftingLogController {
 	return LiftingLogController{DB}
 }
 
-func (lc LiftingLogController) GetAllWorkoutLogs(ctx *gin.Context) {
-	rows, err := lc.DB.Query("SELECT * FROM LiftingLog")
+func (l LiftingLogController) GetAllWorkoutLogs(ctx *gin.Context) {
+	rows, err := l.DB.Query("SELECT * FROM LiftingLog")
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)
@@ -41,14 +41,14 @@ func (lc LiftingLogController) GetAllWorkoutLogs(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, lifting_log_list)
 }
 
-func (lc LiftingLogController) GetWorkoutLogById(ctx *gin.Context) {
+func (l LiftingLogController) GetWorkoutLogById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, "invalid id parameter")
 		return
 	}
-	row, err := lc.DB.Query("SELECT * FROM LIFTINGLOG WHERE id=?", id)
+	row, err := l.DB.Query("SELECT * FROM LIFTINGLOG WHERE id=?", id)
 
 	if err != nil {
 		log.Print(err)
@@ -75,7 +75,7 @@ func (lc LiftingLogController) GetWorkoutLogById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, lifting_log)
 }
 
-func (lc LiftingLogController) LiftingLogsByWorkout(ctx *gin.Context) {
+func (l LiftingLogController) LiftingLogsByWorkout(ctx *gin.Context) {
 	workout_id, err := strconv.Atoi(ctx.Param("workoutid"))
 	log.Print(workout_id)
 	if err != nil {
@@ -83,7 +83,7 @@ func (lc LiftingLogController) LiftingLogsByWorkout(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, "invalid workout id")
 		return
 	}
-	rows, err := lc.DB.Query("SELECT * FROM LiftingLog WHERE workout_id=?", workout_id)
+	rows, err := l.DB.Query("SELECT * FROM LiftingLog WHERE workout_id=?", workout_id)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)
@@ -111,14 +111,14 @@ func (lc LiftingLogController) LiftingLogsByWorkout(ctx *gin.Context) {
 
 }
 
-func (lc LiftingLogController) DeleteWorkoutLog(ctx *gin.Context) {
+func (l LiftingLogController) DeleteWorkoutLog(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, "invalid id parameter")
 		return
 	}
-	res, err := lc.DB.Exec("DELETE FROM LiftingLog WHERE id=?", id)
+	res, err := l.DB.Exec("DELETE FROM LiftingLog WHERE id=?", id)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)
@@ -139,7 +139,7 @@ func (lc LiftingLogController) DeleteWorkoutLog(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, "deletion successful")
 }
 
-func (lc LiftingLogController) AddWorkoutLog(ctx *gin.Context) {
+func (l LiftingLogController) AddWorkoutLog(ctx *gin.Context) {
 	var lifting_log models.LiftingLog
 	err := ctx.BindJSON(&lifting_log)
 	if err != nil {
@@ -161,7 +161,7 @@ func (lc LiftingLogController) AddWorkoutLog(ctx *gin.Context) {
 		return
 	}
 
-	res, err := lc.DB.Query("SELECT * FROM Workouts where id=?", lifting_log.WorkoutId)
+	res, err := l.DB.Query("SELECT * FROM Workouts where id=?", lifting_log.WorkoutId)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)
@@ -173,7 +173,7 @@ func (lc LiftingLogController) AddWorkoutLog(ctx *gin.Context) {
 	}
 	res.Close()
 
-	res, err = lc.DB.Query("SELECT * FROM Lifts where id=?", lifting_log.LiftId)
+	res, err = l.DB.Query("SELECT * FROM Lifts where id=?", lifting_log.LiftId)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)
@@ -185,7 +185,7 @@ func (lc LiftingLogController) AddWorkoutLog(ctx *gin.Context) {
 	}
 	res.Close()
 
-	_, err = lc.DB.Exec("INSERT INTO LiftingLog (lift_id, weight, sets, reps, workout_id) values (?,?,?,?,?)", lifting_log.LiftId, lifting_log.Weight, lifting_log.Sets, lifting_log.Reps, lifting_log.WorkoutId)
+	_, err = l.DB.Exec("INSERT INTO LiftingLog (lift_id, weight, sets, reps, workout_id) values (?,?,?,?,?)", lifting_log.LiftId, lifting_log.Weight, lifting_log.Sets, lifting_log.Reps, lifting_log.WorkoutId)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)

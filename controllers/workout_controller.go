@@ -18,7 +18,7 @@ func NewWorkoutController(DB *sql.DB) WorkoutController {
 	return WorkoutController{DB}
 }
 
-func (wc WorkoutController) GetWorkout(ctx *gin.Context) {
+func (w WorkoutController) GetWorkout(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
@@ -26,7 +26,7 @@ func (wc WorkoutController) GetWorkout(ctx *gin.Context) {
 		return
 	}
 
-	row, err := wc.DB.Query("SELECT * FROM Workouts WHERE id=?", id)
+	row, err := w.DB.Query("SELECT * FROM Workouts WHERE id=?", id)
 
 	if err != nil {
 		log.Print(err)
@@ -52,9 +52,9 @@ func (wc WorkoutController) GetWorkout(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, workout)
 }
 
-func (wc WorkoutController) GetAllWorkouts(ctx *gin.Context) {
+func (w WorkoutController) GetAllWorkouts(ctx *gin.Context) {
 
-	rows, err := wc.DB.Query("SELECT * FROM Workouts")
+	rows, err := w.DB.Query("SELECT * FROM Workouts")
 
 	if err != nil {
 		log.Print(err)
@@ -79,14 +79,14 @@ func (wc WorkoutController) GetAllWorkouts(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, workouts)
 }
 
-func (wc WorkoutController) DeleteWorkout(ctx *gin.Context) {
+func (w WorkoutController) DeleteWorkout(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, "invalid id parameter")
 		return
 	}
-	res, err := wc.DB.Exec("DELETE FROM Workouts WHERE id=?", id)
+	res, err := w.DB.Exec("DELETE FROM Workouts WHERE id=?", id)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)
@@ -106,13 +106,13 @@ func (wc WorkoutController) DeleteWorkout(ctx *gin.Context) {
 		return
 	}
 
-	_, err = wc.DB.Exec("DELETE FROM CardioLog where workout_id=?", id)
+	_, err = w.DB.Exec("DELETE FROM CardioLog where workout_id=?", id)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	_, err = wc.DB.Exec("DELETE FROM LiftingLog where workout_id=?", id)
+	_, err = w.DB.Exec("DELETE FROM LiftingLog where workout_id=?", id)
 
 	if err != nil {
 		log.Print(err)
@@ -123,7 +123,7 @@ func (wc WorkoutController) DeleteWorkout(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, "workout sucessfully deleted")
 }
 
-func (wc WorkoutController) AddWorkout(ctx *gin.Context) {
+func (w WorkoutController) AddWorkout(ctx *gin.Context) {
 	var workout models.Workout
 	err := ctx.BindJSON(&workout)
 	if err != nil {
@@ -132,7 +132,7 @@ func (wc WorkoutController) AddWorkout(ctx *gin.Context) {
 		return
 	}
 
-	_, err = wc.DB.Exec("INSERT INTO Workouts (Location, Notes) VALUES (?, ?)", &workout.Location, &workout.Notes)
+	_, err = w.DB.Exec("INSERT INTO Workouts (Location, Notes) VALUES (?, ?)", &workout.Location, &workout.Notes)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)

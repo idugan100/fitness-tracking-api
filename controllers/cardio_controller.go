@@ -17,7 +17,7 @@ type CardioController struct {
 func NewCardioController(DB *sql.DB) CardioController {
 	return CardioController{DB}
 }
-func (cc CardioController) GetCardioById(ctx *gin.Context) {
+func (c CardioController) GetCardioById(ctx *gin.Context) {
 	//validate id input
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -27,7 +27,7 @@ func (cc CardioController) GetCardioById(ctx *gin.Context) {
 	}
 
 	//get result from database and read into struct
-	row, err := cc.DB.Query("SELECT * FROM Cardio WHERE id=?", id)
+	row, err := c.DB.Query("SELECT * FROM Cardio WHERE id=?", id)
 
 	if err != nil {
 		log.Print(err)
@@ -53,8 +53,8 @@ func (cc CardioController) GetCardioById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, cardio)
 }
 
-func (cc CardioController) GetAllCardio(ctx *gin.Context) {
-	rows, err := cc.DB.Query("SELECT * FROM Cardio")
+func (c CardioController) GetAllCardio(ctx *gin.Context) {
+	rows, err := c.DB.Query("SELECT * FROM Cardio")
 
 	if err != nil {
 		log.Print(err)
@@ -80,13 +80,13 @@ func (cc CardioController) GetAllCardio(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, cardio_list)
 }
 
-func (cc CardioController) SearchCardioByName(ctx *gin.Context) {
+func (c CardioController) SearchCardioByName(ctx *gin.Context) {
 	search := ctx.Query("name")
 	if search == "" {
 		ctx.JSON(http.StatusBadRequest, "missing name query parameter")
 	}
 
-	rows, err := cc.DB.Query("SELECT * FROM Cardio WHERE Name LIKE ?", "%"+search+"%")
+	rows, err := c.DB.Query("SELECT * FROM Cardio WHERE Name LIKE ?", "%"+search+"%")
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)
@@ -108,14 +108,14 @@ func (cc CardioController) SearchCardioByName(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, cardio_list)
 }
 
-func (cc CardioController) DeleteCardio(ctx *gin.Context) {
+func (c CardioController) DeleteCardio(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	res, err := cc.DB.Exec("DELETE FROM Cardio WHERE id=?", id)
+	res, err := c.DB.Exec("DELETE FROM Cardio WHERE id=?", id)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)
@@ -130,22 +130,22 @@ func (cc CardioController) DeleteCardio(ctx *gin.Context) {
 	}
 
 	if rows_affected == 0 {
-		log.Print("Unsuccessful Deletion - Resource Not Found")
+		log.Print("Unsucessful Deletion - Resource Not Found")
 		ctx.AbortWithStatus(http.StatusGone)
 		return
 	}
 
-	_, err = cc.DB.Exec("DELETE FROM CardioLog WHERE cardio_id=?", id)
+	_, err = c.DB.Exec("DELETE FROM CardioLog WHERE cardio_id=?", id)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, "cardio successfully deleted")
+	ctx.JSON(http.StatusOK, "cardio sucessfully deleted")
 }
 
-func (cc CardioController) AddCardio(ctx *gin.Context) {
+func (c CardioController) AddCardio(ctx *gin.Context) {
 	var cardio models.Cardio
 	err := ctx.BindJSON(&cardio)
 	if err != nil {
@@ -153,7 +153,7 @@ func (cc CardioController) AddCardio(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	_, err = cc.DB.Exec("INSERT INTO Cardio (name) VALUES (?)", cardio.Name)
+	_, err = c.DB.Exec("INSERT INTO Cardio (name) VALUES (?)", cardio.Name)
 
 	if err != nil {
 		log.Print(err)

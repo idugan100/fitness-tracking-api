@@ -18,7 +18,7 @@ func NewLiftController(DB *sql.DB) LiftController {
 	return LiftController{DB}
 }
 
-func (lc LiftController) GetLift(ctx *gin.Context) {
+func (l LiftController) GetLift(ctx *gin.Context) {
 	//validate id input
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -28,7 +28,7 @@ func (lc LiftController) GetLift(ctx *gin.Context) {
 	}
 
 	//start repo
-	row, err := lc.DB.Query("SELECT * FROM LIFTS WHERE id=?", id)
+	row, err := l.DB.Query("SELECT * FROM LIFTS WHERE id=?", id)
 
 	if err != nil {
 		log.Print(err)
@@ -54,9 +54,9 @@ func (lc LiftController) GetLift(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, lift)
 }
 
-func (lc LiftController) GetAllLifts(ctx *gin.Context) {
+func (l LiftController) GetAllLifts(ctx *gin.Context) {
 	//start repo
-	rows, err := lc.DB.Query("SELECT * FROM LIFTS")
+	rows, err := l.DB.Query("SELECT * FROM LIFTS")
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)
@@ -79,14 +79,14 @@ func (lc LiftController) GetAllLifts(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, lifts)
 }
 
-func (lc LiftController) SearchLiftsByName(ctx *gin.Context) {
+func (l LiftController) SearchLiftsByName(ctx *gin.Context) {
 	search_name := ctx.Query("name")
 	if search_name == "" {
 		ctx.JSON(http.StatusBadRequest, "missing name query parameter")
 		return
 	}
 	//start repo
-	rows, err := lc.DB.Query("SELECT * FROM Lifts WHERE name like ?", "%"+search_name+"%")
+	rows, err := l.DB.Query("SELECT * FROM Lifts WHERE name like ?", "%"+search_name+"%")
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)
@@ -111,7 +111,7 @@ func (lc LiftController) SearchLiftsByName(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, lifts)
 }
 
-func (lc LiftController) DeleteLift(ctx *gin.Context) {
+func (l LiftController) DeleteLift(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
@@ -120,7 +120,7 @@ func (lc LiftController) DeleteLift(ctx *gin.Context) {
 	}
 
 	//start repo
-	res, err := lc.DB.Exec("DELETE FROM Lifts WHERE id=?", id)
+	res, err := l.DB.Exec("DELETE FROM Lifts WHERE id=?", id)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)
@@ -140,7 +140,7 @@ func (lc LiftController) DeleteLift(ctx *gin.Context) {
 		ctx.AbortWithStatus(http.StatusGone)
 		return
 	}
-	_, err = lc.DB.Exec("DELETE FROM LiftingLog WHERE lift_id=?", id)
+	_, err = l.DB.Exec("DELETE FROM LiftingLog WHERE lift_id=?", id)
 	if err != nil {
 		log.Print(err)
 		ctx.AbortWithStatus(http.StatusInternalServerError)
@@ -151,7 +151,7 @@ func (lc LiftController) DeleteLift(ctx *gin.Context) {
 
 }
 
-func (lc LiftController) AddLift(ctx *gin.Context) {
+func (l LiftController) AddLift(ctx *gin.Context) {
 	var new_lift models.Lift
 	err := ctx.BindJSON(&new_lift)
 	if err != nil {
@@ -161,7 +161,7 @@ func (lc LiftController) AddLift(ctx *gin.Context) {
 	}
 
 	//start repo
-	_, err = lc.DB.Exec("INSERT INTO Lifts (name, compound, upper, lower) Values (?,?,?,?) ", new_lift.Name, new_lift.Compound, new_lift.Upper, new_lift.Lower)
+	_, err = l.DB.Exec("INSERT INTO Lifts (name, compound, upper, lower) Values (?,?,?,?) ", new_lift.Name, new_lift.Compound, new_lift.Upper, new_lift.Lower)
 	//end repo
 	if err != nil {
 		log.Print(err)
