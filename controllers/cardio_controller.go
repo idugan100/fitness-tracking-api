@@ -14,10 +14,10 @@ type CardioController struct {
 	DB *sql.DB
 }
 
-func NewCardioController(DB *sql.DB) *CardioController {
-	return &CardioController{DB}
+func NewCardioController(DB *sql.DB) CardioController {
+	return CardioController{DB}
 }
-func (cc *CardioController) GetCardioById(ctx *gin.Context) {
+func (cc CardioController) GetCardioById(ctx *gin.Context) {
 	//validate id input
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -53,7 +53,7 @@ func (cc *CardioController) GetCardioById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, cardio)
 }
 
-func (cc *CardioController) GetAllCardio(ctx *gin.Context) {
+func (cc CardioController) GetAllCardio(ctx *gin.Context) {
 	rows, err := cc.DB.Query("SELECT * FROM Cardio")
 
 	if err != nil {
@@ -80,7 +80,7 @@ func (cc *CardioController) GetAllCardio(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, cardio_list)
 }
 
-func (cc *CardioController) SearchCardioByName(ctx *gin.Context) {
+func (cc CardioController) SearchCardioByName(ctx *gin.Context) {
 	search := ctx.Query("name")
 	if search == "" {
 		ctx.JSON(http.StatusBadRequest, "missing name query parameter")
@@ -108,7 +108,7 @@ func (cc *CardioController) SearchCardioByName(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, cardio_list)
 }
 
-func (cc *CardioController) DeleteCardio(ctx *gin.Context) {
+func (cc CardioController) DeleteCardio(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
@@ -145,7 +145,7 @@ func (cc *CardioController) DeleteCardio(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, "cardio successfully deleted")
 }
 
-func (cc *CardioController) AddCardio(ctx *gin.Context) {
+func (cc CardioController) AddCardio(ctx *gin.Context) {
 	var cardio models.Cardio
 	err := ctx.BindJSON(&cardio)
 	if err != nil {

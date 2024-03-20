@@ -14,11 +14,11 @@ type WorkoutController struct {
 	DB *sql.DB
 }
 
-func NewWorkoutController(DB *sql.DB) *WorkoutController {
-	return &WorkoutController{DB}
+func NewWorkoutController(DB *sql.DB) WorkoutController {
+	return WorkoutController{DB}
 }
 
-func (wc *WorkoutController) GetWorkout(ctx *gin.Context) {
+func (wc WorkoutController) GetWorkout(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
@@ -52,7 +52,7 @@ func (wc *WorkoutController) GetWorkout(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, workout)
 }
 
-func (wc *WorkoutController) GetAllWorkouts(ctx *gin.Context) {
+func (wc WorkoutController) GetAllWorkouts(ctx *gin.Context) {
 
 	rows, err := wc.DB.Query("SELECT * FROM Workouts")
 
@@ -79,7 +79,7 @@ func (wc *WorkoutController) GetAllWorkouts(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, workouts)
 }
 
-func (wc *WorkoutController) DeleteWorkout(ctx *gin.Context) {
+func (wc WorkoutController) DeleteWorkout(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
@@ -123,7 +123,7 @@ func (wc *WorkoutController) DeleteWorkout(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, "workout sucessfully deleted")
 }
 
-func (wc *WorkoutController) AddWorkout(ctx *gin.Context) {
+func (wc WorkoutController) AddWorkout(ctx *gin.Context) {
 	var workout models.Workout
 	err := ctx.BindJSON(&workout)
 	if err != nil {

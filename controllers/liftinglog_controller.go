@@ -14,11 +14,11 @@ type LiftingLogController struct {
 	DB *sql.DB
 }
 
-func NewLiftingLogController(DB *sql.DB) *LiftingLogController {
-	return &LiftingLogController{DB}
+func NewLiftingLogController(DB *sql.DB) LiftingLogController {
+	return LiftingLogController{DB}
 }
 
-func (lc *LiftingLogController) GetAllWorkoutLogs(ctx *gin.Context) {
+func (lc LiftingLogController) GetAllWorkoutLogs(ctx *gin.Context) {
 	rows, err := lc.DB.Query("SELECT * FROM LiftingLog")
 	if err != nil {
 		log.Print(err)
@@ -41,7 +41,7 @@ func (lc *LiftingLogController) GetAllWorkoutLogs(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, lifting_log_list)
 }
 
-func (lc *LiftingLogController) GetWorkoutLogById(ctx *gin.Context) {
+func (lc LiftingLogController) GetWorkoutLogById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
@@ -75,7 +75,7 @@ func (lc *LiftingLogController) GetWorkoutLogById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, lifting_log)
 }
 
-func (lc *LiftingLogController) LiftingLogsByWorkout(ctx *gin.Context) {
+func (lc LiftingLogController) LiftingLogsByWorkout(ctx *gin.Context) {
 	workout_id, err := strconv.Atoi(ctx.Param("workoutid"))
 	log.Print(workout_id)
 	if err != nil {
@@ -111,7 +111,7 @@ func (lc *LiftingLogController) LiftingLogsByWorkout(ctx *gin.Context) {
 
 }
 
-func (lc *LiftingLogController) DeleteWorkoutLog(ctx *gin.Context) {
+func (lc LiftingLogController) DeleteWorkoutLog(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
@@ -139,7 +139,7 @@ func (lc *LiftingLogController) DeleteWorkoutLog(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, "deletion successful")
 }
 
-func (lc *LiftingLogController) AddWorkoutLog(ctx *gin.Context) {
+func (lc LiftingLogController) AddWorkoutLog(ctx *gin.Context) {
 	var lifting_log models.LiftingLog
 	err := ctx.BindJSON(&lifting_log)
 	if err != nil {

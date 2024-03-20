@@ -14,11 +14,11 @@ type LiftController struct {
 	DB *sql.DB
 }
 
-func NewLiftController(DB *sql.DB) *LiftController {
-	return &LiftController{DB}
+func NewLiftController(DB *sql.DB) LiftController {
+	return LiftController{DB}
 }
 
-func (lc *LiftController) GetLift(ctx *gin.Context) {
+func (lc LiftController) GetLift(ctx *gin.Context) {
 	//validate id input
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -54,7 +54,7 @@ func (lc *LiftController) GetLift(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, lift)
 }
 
-func (lc *LiftController) GetAllLifts(ctx *gin.Context) {
+func (lc LiftController) GetAllLifts(ctx *gin.Context) {
 	//start repo
 	rows, err := lc.DB.Query("SELECT * FROM LIFTS")
 	if err != nil {
@@ -79,7 +79,7 @@ func (lc *LiftController) GetAllLifts(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, lifts)
 }
 
-func (lc *LiftController) SearchLiftsByName(ctx *gin.Context) {
+func (lc LiftController) SearchLiftsByName(ctx *gin.Context) {
 	search_name := ctx.Query("name")
 	if search_name == "" {
 		ctx.JSON(http.StatusBadRequest, "missing name query parameter")
@@ -111,7 +111,7 @@ func (lc *LiftController) SearchLiftsByName(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, lifts)
 }
 
-func (lc *LiftController) DeleteLift(ctx *gin.Context) {
+func (lc LiftController) DeleteLift(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
@@ -151,7 +151,7 @@ func (lc *LiftController) DeleteLift(ctx *gin.Context) {
 
 }
 
-func (lc *LiftController) AddLift(ctx *gin.Context) {
+func (lc LiftController) AddLift(ctx *gin.Context) {
 	var new_lift models.Lift
 	err := ctx.BindJSON(&new_lift)
 	if err != nil {
