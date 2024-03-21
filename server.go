@@ -24,7 +24,7 @@ func main() {
 
 	var liftController controllers.ExerciseController = controllers.NewLiftController(db)
 	var cardioController controllers.ExerciseController = controllers.NewCardioController(db)
-	workoutController := controllers.NewWorkoutController(db)
+	var workoutController controllers.ExerciseEventController = controllers.NewWorkoutController(db)
 	liftingLogController := controllers.NewLiftingLogController(db)
 	cardioLogController := controllers.NewCardioLogController(db)
 
@@ -66,10 +66,10 @@ func main() {
 
 	workout_group := server.Group("/workouts")
 	{
-		workout_group.GET("", workoutController.GetAllWorkouts)
-		workout_group.GET("/:id", workoutController.GetWorkout)
-		workout_group.DELETE("/:id", workoutController.DeleteWorkout)
-		workout_group.POST("", workoutController.AddWorkout)
+		workout_group.GET("", workoutController.GetAll)
+		workout_group.GET("/:id", workoutController.GetById)
+		workout_group.DELETE("/:id", workoutController.Delete)
+		workout_group.POST("", workoutController.Create)
 	}
 
 	server.GET("/documentation", func(ctx *gin.Context) {

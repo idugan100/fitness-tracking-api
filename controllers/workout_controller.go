@@ -18,7 +18,7 @@ func NewWorkoutController(DB *sql.DB) WorkoutController {
 	return WorkoutController{DB}
 }
 
-func (w WorkoutController) GetWorkout(ctx *gin.Context) {
+func (w WorkoutController) GetById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
@@ -52,7 +52,7 @@ func (w WorkoutController) GetWorkout(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, workout)
 }
 
-func (w WorkoutController) GetAllWorkouts(ctx *gin.Context) {
+func (w WorkoutController) GetAll(ctx *gin.Context) {
 
 	rows, err := w.DB.Query("SELECT * FROM Workouts")
 
@@ -79,7 +79,7 @@ func (w WorkoutController) GetAllWorkouts(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, workouts)
 }
 
-func (w WorkoutController) DeleteWorkout(ctx *gin.Context) {
+func (w WorkoutController) Delete(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
@@ -123,7 +123,7 @@ func (w WorkoutController) DeleteWorkout(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, "workout sucessfully deleted")
 }
 
-func (w WorkoutController) AddWorkout(ctx *gin.Context) {
+func (w WorkoutController) Create(ctx *gin.Context) {
 	var workout models.Workout
 	err := ctx.BindJSON(&workout)
 	if err != nil {
