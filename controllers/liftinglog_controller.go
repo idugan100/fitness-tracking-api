@@ -18,7 +18,7 @@ func NewLiftingLogController(DB *sql.DB) LiftingLogController {
 	return LiftingLogController{DB}
 }
 
-func (l LiftingLogController) GetAllWorkoutLogs(ctx *gin.Context) {
+func (l LiftingLogController) GetAll(ctx *gin.Context) {
 	rows, err := l.DB.Query("SELECT * FROM LiftingLog")
 	if err != nil {
 		log.Print(err)
@@ -41,7 +41,7 @@ func (l LiftingLogController) GetAllWorkoutLogs(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, lifting_log_list)
 }
 
-func (l LiftingLogController) GetWorkoutLogById(ctx *gin.Context) {
+func (l LiftingLogController) GetById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
@@ -75,7 +75,7 @@ func (l LiftingLogController) GetWorkoutLogById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, lifting_log)
 }
 
-func (l LiftingLogController) LiftingLogsByWorkout(ctx *gin.Context) {
+func (l LiftingLogController) ByWorkout(ctx *gin.Context) {
 	workout_id, err := strconv.Atoi(ctx.Param("workoutid"))
 	log.Print(workout_id)
 	if err != nil {
@@ -111,7 +111,7 @@ func (l LiftingLogController) LiftingLogsByWorkout(ctx *gin.Context) {
 
 }
 
-func (l LiftingLogController) DeleteWorkoutLog(ctx *gin.Context) {
+func (l LiftingLogController) Delete(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		log.Print(err)
@@ -139,7 +139,7 @@ func (l LiftingLogController) DeleteWorkoutLog(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, "deletion successful")
 }
 
-func (l LiftingLogController) AddWorkoutLog(ctx *gin.Context) {
+func (l LiftingLogController) Create(ctx *gin.Context) {
 	var lifting_log models.LiftingLog
 	err := ctx.BindJSON(&lifting_log)
 	if err != nil {

@@ -25,7 +25,7 @@ func main() {
 	var liftController controllers.ExerciseController = controllers.NewLiftController(db)
 	var cardioController controllers.ExerciseController = controllers.NewCardioController(db)
 	var workoutController controllers.ExerciseEventController = controllers.NewWorkoutController(db)
-	liftingLogController := controllers.NewLiftingLogController(db)
+	var liftingLogController controllers.ExerciseLogController = controllers.NewLiftingLogController(db)
 	cardioLogController := controllers.NewCardioLogController(db)
 
 	lift_group := server.Group("/lifts")
@@ -57,11 +57,11 @@ func main() {
 
 	workout_log_group := server.Group("/workoutlog")
 	{
-		workout_log_group.GET("", liftingLogController.GetAllWorkoutLogs)
-		workout_log_group.GET("/:id", liftingLogController.GetWorkoutLogById)
-		workout_log_group.GET("/workout/:workoutid", liftingLogController.LiftingLogsByWorkout)
-		workout_log_group.DELETE("/:id", liftingLogController.DeleteWorkoutLog)
-		workout_log_group.POST("", liftingLogController.AddWorkoutLog)
+		workout_log_group.GET("", liftingLogController.GetAll)
+		workout_log_group.GET("/:id", liftingLogController.GetById)
+		workout_log_group.GET("/workout/:workoutid", liftingLogController.ByWorkout)
+		workout_log_group.DELETE("/:id", liftingLogController.Delete)
+		workout_log_group.POST("", liftingLogController.Create)
 	}
 
 	workout_group := server.Group("/workouts")
