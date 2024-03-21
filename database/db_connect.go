@@ -3,6 +3,8 @@ package database
 import (
 	"database/sql"
 	"log"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func ConnectToDatabase() (*sql.DB, error) {
@@ -10,6 +12,6 @@ func ConnectToDatabase() (*sql.DB, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Print("connected to databse sucessfully")
+	log.Print("connected to database sucessfully")
 	return DB_connection, nil
 }
