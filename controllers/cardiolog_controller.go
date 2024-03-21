@@ -18,7 +18,7 @@ func NewCardioLogController(DB *sql.DB) CardioLogController {
 	return CardioLogController{DB}
 }
 
-func (c CardioLogController) GetAllCardioLogs(ctx *gin.Context) {
+func (c CardioLogController) GetAll(ctx *gin.Context) {
 	rows, err := c.DB.Query("SELECT * FROM CardioLog")
 	if err != nil {
 		log.Print(err)
@@ -41,7 +41,7 @@ func (c CardioLogController) GetAllCardioLogs(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, cardioLogList)
 }
 
-func (c CardioLogController) GetCardioLogById(ctx *gin.Context) {
+func (c CardioLogController) GetById(ctx *gin.Context) {
 	idString := ctx.Param("id")
 	id, err := strconv.Atoi(idString)
 	if err != nil {
@@ -73,7 +73,7 @@ func (c CardioLogController) GetCardioLogById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, cardioLog)
 }
 
-func (c CardioLogController) CardioLogsByWorkout(ctx *gin.Context) {
+func (c CardioLogController) ByWorkout(ctx *gin.Context) {
 	workoutIdString := ctx.Param("workoutid")
 	workoutId, err := strconv.Atoi(workoutIdString)
 	if err != nil {
@@ -108,7 +108,7 @@ func (c CardioLogController) CardioLogsByWorkout(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, cardioLogList)
 }
 
-func (c CardioLogController) DeleteCardioLog(ctx *gin.Context) {
+func (c CardioLogController) Delete(ctx *gin.Context) {
 	idString := ctx.Param("id")
 	cardioLogId, err := strconv.Atoi(idString)
 	if err != nil {
@@ -137,7 +137,7 @@ func (c CardioLogController) DeleteCardioLog(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
 }
 
-func (c CardioLogController) AddCardioLog(ctx *gin.Context) {
+func (c CardioLogController) Create(ctx *gin.Context) {
 	var cardioLog models.CardioLog
 
 	err := ctx.BindJSON(&cardioLog)
@@ -173,7 +173,7 @@ func (c CardioLogController) AddCardioLog(ctx *gin.Context) {
 		return
 	}
 	if !res.Next() {
-		ctx.AbortWithStatusJSON(http.StatusNotFound, "lift id does not exist")
+		ctx.AbortWithStatusJSON(http.StatusNotFound, "cardio id does not exist")
 		return
 	}
 	res.Close()
