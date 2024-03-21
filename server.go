@@ -22,19 +22,19 @@ func main() {
 	server.SetTrustedProxies([]string{"127.0.0.1"})
 	// server.LoadHTMLGlob("./templates/*")
 
-	liftController := controllers.NewLiftController(db)
-	cardioController := controllers.NewCardioController(db)
+	var liftController controllers.ExerciseController = controllers.NewLiftController(db)
+	var cardioController controllers.ExerciseController = controllers.NewCardioController(db)
 	workoutController := controllers.NewWorkoutController(db)
 	liftingLogController := controllers.NewLiftingLogController(db)
 	cardioLogController := controllers.NewCardioLogController(db)
 
 	lift_group := server.Group("/lifts")
 	{
-		lift_group.GET("/:id", liftController.GetLift)
-		lift_group.GET("", liftController.GetAllLifts)
-		lift_group.GET("/search", liftController.SearchLiftsByName)
-		lift_group.DELETE("/:id", liftController.DeleteLift)
-		lift_group.POST("", liftController.AddLift)
+		lift_group.GET("/:id", liftController.GetById)
+		lift_group.GET("", liftController.GetAll)
+		lift_group.GET("/search", liftController.Search)
+		lift_group.DELETE("/:id", liftController.Delete)
+		lift_group.POST("", liftController.Create)
 	}
 
 	cardio_log_group := server.Group("/cardiolog")
@@ -48,11 +48,11 @@ func main() {
 
 	cardio_group := server.Group("/cardio")
 	{
-		cardio_group.GET("/:id", cardioController.GetCardioById)
-		cardio_group.GET("", cardioController.GetAllCardio)
-		cardio_group.GET("/search", cardioController.SearchCardioByName)
-		cardio_group.DELETE("/:id", cardioController.DeleteCardio)
-		cardio_group.POST("", cardioController.AddCardio)
+		cardio_group.GET("/:id", cardioController.GetById)
+		cardio_group.GET("", cardioController.GetAll)
+		cardio_group.GET("/search", cardioController.Search)
+		cardio_group.DELETE("/:id", cardioController.Delete)
+		cardio_group.POST("", cardioController.Create)
 	}
 
 	workout_log_group := server.Group("/workoutlog")
