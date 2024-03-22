@@ -21,6 +21,7 @@ func main() {
 		fmt.Print(err)
 		return
 	}
+	defer db.Close()
 
 	seeder := database.NewSeeder(db)
 
@@ -31,12 +32,14 @@ func main() {
 			log.Print(err.Error())
 			return
 		}
+		fmt.Print("Done seeding")
 	case "clear":
 		err := seeder.Clear()
 		if err != nil {
 			log.Print(err.Error())
 			return
 		}
+		fmt.Print("Done clearing")
 	default:
 		fmt.Printf("command not recognized %s", firstArg)
 	}

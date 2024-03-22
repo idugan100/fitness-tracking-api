@@ -17,6 +17,8 @@ func main() {
 		log.Print(err)
 		return
 	}
+	defer db.Close()
+
 	server := gin.Default()
 	server.ForwardedByClientIP = true
 	server.SetTrustedProxies([]string{"127.0.0.1"})
