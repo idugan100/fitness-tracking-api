@@ -15,7 +15,7 @@ func main() {
 		return
 	}
 
-	db, err := database.ConnectToDatabase()
+	db, err := database.ConnectToDatabase("/Users/isaacdugan/code/fitness-tracker-api/database/db.sqlite")
 	if err != nil {
 		fmt.Print("Error opening database")
 		fmt.Print(err)

@@ -7,8 +7,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func ConnectToDatabase() (*sql.DB, error) {
-	DB_connection, err := sql.Open("sqlite3", "file:/Users/isaacdugan/code/fitness-tracker-api/database/db.sqlite")
+func ConnectToDatabase(dbPath string) (*sql.DB, error) {
+	DB_connection, err := sql.Open("sqlite3", ("file:" + dbPath))
 	if err != nil {
 		log.Fatal(err)
 	}
