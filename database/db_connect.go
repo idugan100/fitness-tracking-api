@@ -8,7 +8,7 @@ import (
 )
 
 func ConnectToDatabase() (*sql.DB, error) {
-	DB_connection, err := sql.Open("sqlite3", "file:./database/db.sqlite")
+	DB_connection, err := sql.Open("sqlite3", "file:/Users/isaacdugan/code/fitness-tracker-api/database/db.sqlite")
 	if err != nil {
 		log.Fatal(err)
 	}
